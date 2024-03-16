@@ -3,10 +3,10 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { IoMdClipboard } from "react-icons/io";
-import { useRouter, usePathname, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { auth } from "../../firebase";
-import { signOut, onAuthStateChanged } from "firebase/auth";
+import { signOut } from "firebase/auth";
 
 function NavBar({ className, ...props }: React.HTMLAttributes<HTMLElement>) {
   const [user, setUser] = useState<any>(null);
