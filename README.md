@@ -15,6 +15,9 @@ AbsenKu web app that store person of the class and record their attendance
 
 ## Getting Started
 
+https://absen-ku.vercel.app/
+
+Or
 
 ```bash
 git clone https://github.com/TrayMachi/AbsenKu-fe.git
@@ -29,6 +32,8 @@ npm install
 ```bash
 npm run dev
 ```
+
+## IMPORTANT
 
 Don't forget to run the [backend](https://github.com/TrayMachi/AbsenKu-Be) via:
 ```bash
