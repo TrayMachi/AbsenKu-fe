@@ -9,11 +9,23 @@ import {
 } from "@/components/ui/card";
 import LoginForm from "@/components/LoginForm";
 import RegisterForm from "@/components/RegisForm";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { auth } from "../../firebase";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [showLoginForm, setShowLoginForm] = useState(true);
   const [showRegisterForm, setShowRegisterForm] = useState(false);
+
+  const router = useRouter();
+
+  const fetchUser = () => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        router.push("/dashboard");
+      } 
+    });
+  };
 
   const handleLoginClick = () => {
     setShowLoginForm(true);
@@ -24,6 +36,10 @@ export default function Home() {
     setShowLoginForm(false);
     setShowRegisterForm(true);
   };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   return (
     <main className="flex justify-center mt-[15vh]">
