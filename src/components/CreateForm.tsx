@@ -23,7 +23,8 @@ import {
     SelectValue,
   } from "@/components/ui/select"
 import { toast } from "sonner";
-import { auth } from "../../firebase";
+import { useData } from "./context";
+import FetchService from "@/service/fetch.service";
 
 const FormSchema = z.object({
   name: z
@@ -40,45 +41,19 @@ const FormSchema = z.object({
 type FormValues = z.infer<typeof FormSchema>;
 
 const PersonForm: NextPage = () => {
+  const [data, setData] = useData();
+  const fetchService = FetchService.getInstance();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
   });
-  const [userId, setUserId] = useState<any>(null);
-
-  const fetchUser = () => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUserId(user.email);
-      } else {
-        setUserId(null);
-      }
-    });
-  };
 
   function onSubmit(data: FormValues) {
-    fetch("http://localhost:3000/person", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ...data, userId: userId }),
-    })
-      .then((response) => {
-        if (response.ok) {
-          toast.success("Successfully added a new person");
-        } else {
-          toast.error("An error occurred");
-        }
-      })
-      .catch((error) => {
-        console.error("Error registering:", error);
-        toast.error("An error occurred");
-      });
+    fetchService.createResource(data).then((data) => {
+      setData((prevData) => [...prevData, data]);
+      toast.success("Successfully added a new person");
+    });
   }
-
-  useEffect(() => {
-    fetchUser();
-  }, []);
 
   return (
     <Form {...form}>
