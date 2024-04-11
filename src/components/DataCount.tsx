@@ -1,7 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { auth } from "../../firebase";
-import { onAuthStateChanged } from "firebase/auth";
 import {
   Card,
   CardContent,
@@ -10,10 +9,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useData } from "./context";
+import FetchService from "@/service/fetch.service";
 
 function DataCount() {
   const [data, setData] = useData();
   const [user, setUser] = useState<any>(null);
+  const fetchService = FetchService.getInstance();
 
   const fetchUser = () => {
     auth.onAuthStateChanged((user) => {
@@ -30,15 +31,12 @@ function DataCount() {
   }, []);
 
   const fetchData = async (user: any) => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/person?userId=${user}`
-      );
-      const data = await response.json();
-      setData(data);
-    } catch (error) {
-      console.error("Failed to fetch: ", error);
-    }
+    fetchService
+      .getDocuments(user)
+      .then((data) => {
+        setData(data);
+      })
+      .catch((error) => console.error("Failed to fetch: ", error));
   };
 
   useEffect(() => {
