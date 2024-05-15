@@ -17,75 +17,33 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useEffect } from "react";
 import { toast } from "sonner";
 import { CiTrash } from "react-icons/ci";
-import { auth } from "../../firebase";
 import { useData } from "./context";
+import FetchService from "@/service/fetch.service";
 
 function TableAbsen() {
   const [data, setData] = useData();
-
-  const fetchUser = async () => {
-    const userId = auth.currentUser?.email;
-    try {
-      const response = await fetch(
-        `http://localhost:3000/person?userId=${userId}`
-      );
-      const data = await response.json();
-      setData(data);
-    } catch (error) {
-      console.error("Failed to fetch: ", error);
-    }
-  };
+  const fetchService = FetchService.getInstance();
 
   const handleClick = async (id: string, attendance: boolean) => {
-    try {
-      const response = await fetch(`http://localhost:3000/person/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ present: attendance }),
-      });
-
-      if (response.ok) {
-        const updatedPerson = await response.json();
-        const name = updatedPerson.name;
-        setData((prevData) =>
-          prevData.map((person) =>
-            person.id === updatedPerson.id ? updatedPerson : person
-          )
-        );
-        toast.success(`${name} is now ${attendance ? "present" : "absent"}`);
-      } else {
-        console.error("Failed to update present status");
-      }
-    } catch (error) {
-      console.error("Failed to fetch: ", error);
-    }
+    fetchService.updateStatus(id, { present: attendance }).then((data) => {
+      const name = data.name;
+      setData((prevData) =>
+        prevData.map((person) =>
+          person.id === data.id ? { ...person, present: attendance } : person
+        )
+      );
+      toast.success(`${name} is now ${attendance ? "present" : "absent"}`);
+    });
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      const response = await fetch(`http://localhost:3000/person/${id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        setData((prevData) => prevData.filter((person) => person.id !== id));
-        toast.success("Person deleted successfully");
-      } else {
-        console.error("Failed to delete person");
-      }
-    } catch (error) {
-      console.error("Failed to fetch: ", error);
-    }
+    fetchService.deleteResource(id).then(() => {
+      setData((prevData) => prevData.filter((person) => person.id !== id));
+      toast.success("Person deleted successfully");
+    });
   };
-
-  useEffect(() => {
-    fetchUser();
-  }, []);
 
   return (
     <Table className="text-center">
