@@ -1,7 +1,7 @@
 import { auth } from "../../firebase";
 
 class FetchService {
-  private baseUrl: string = "http://localhost:3000/person";
+  private baseUrl: string = process.env.BACKEND_URL as string;
   private static instance: FetchService;
 
   public static getInstance() {
