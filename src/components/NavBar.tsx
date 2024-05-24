@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { IoMdClipboard } from "react-icons/io";
@@ -7,16 +7,17 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { auth } from "../../firebase";
 import { signOut } from "firebase/auth";
+import { useAuth } from "../context/context";
 
 function NavBar({ className, ...props }: React.HTMLAttributes<HTMLElement>) {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useAuth();
 
   const router = useRouter();
 
   const fetchUser = () => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        setUser(user.displayName);
+        setUser(user);
       } else {
         setUser(null);
         router.push("/");
@@ -63,7 +64,7 @@ function NavBar({ className, ...props }: React.HTMLAttributes<HTMLElement>) {
             <p className="text-sm">
               Welcome,{" "}
               <span className="text-primary font-medium transition-colors">
-                {user}
+                {user.displayName}
               </span>
             </p>
             <button
