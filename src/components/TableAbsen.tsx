@@ -1,3 +1,4 @@
+"use client";
 import {
   Table,
   TableBody,
@@ -19,12 +20,52 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { CiTrash } from "react-icons/ci";
-import { useData } from "./context";
+import { useData } from "../context/context";
 import FetchService from "@/service/fetch.service";
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/context";
 
-function TableAbsen() {
+export const TableAbsen = ({
+  filterRole,
+  filterAttendance,
+}: {
+  filterRole: string;
+  filterAttendance: string;
+}) => {
   const [data, setData] = useData();
+  const [user, setUser] = useAuth();
   const fetchService = FetchService.getInstance();
+
+  const fetchData = async (user: any) => {
+    fetchService
+      .getDocuments(user.email, null, null)
+      .then((data) => {
+        setData(data);
+      })
+      .catch((error) => console.error("Failed to fetch: ", error));
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchData(user);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchService
+        .getDocuments(
+          user.email,
+          filterRole === "All" ? null : filterRole,
+          filterAttendance === "All" ? null : filterAttendance === "Present" ? "True" : "False"
+        )
+        .then((data) => {
+          setData(data);
+          toast.success("Successfully filtered");
+        })
+        .catch((error) => console.error("Failed to fetch: ", error));
+    }
+  }, [filterRole, filterAttendance]);
 
   const handleClick = async (id: string, attendance: boolean) => {
     fetchService.updateStatus(id, { present: attendance }).then((data) => {
@@ -125,6 +166,4 @@ function TableAbsen() {
       </TableBody>
     </Table>
   );
-}
-
-export default TableAbsen;
+};
