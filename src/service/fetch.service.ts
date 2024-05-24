@@ -11,14 +11,28 @@ class FetchService {
     return FetchService.instance;
   }
 
-  async getDocuments(userId: any): Promise<any> {
-    const url = `${this.baseUrl}?userId=${userId}`;
+  async getDocuments(userId: string, role: string | null, present: string | null): Promise<any> {
+    const roleUrl = role !== null ? `&role=${role}` : ""
+    const presentUrl = present !== null ? `&present=${present}` : ""
+    const url = `${this.baseUrl}?userId=${userId}${roleUrl}${presentUrl}`;
     try {
       const response = await fetch(url);
       const data = await response.json();
       return data;
     } catch (error) {
       console.error(`Error fetching resource ${userId}:`, error);
+      throw error;
+    }
+  }
+
+  async getDocumentByRole(userId: any, role: string): Promise<any> {
+    const url = `${this.baseUrl}?userId=${userId}&role=${role}`;
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(`Error fetching resource ${userId} with role ${role}:`, error);
       throw error;
     }
   }
