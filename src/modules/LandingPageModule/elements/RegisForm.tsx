@@ -23,16 +23,15 @@ import { toast } from "sonner";
 const FormSchema = z.object({
   name: z
     .string({
-      required_error: "Please fill your full name.",
+      required_error: "",
     })
-    .min(4, "Name must be at least 4 characters long.")
-    .max(24, "Name must be no more than 24 characters long."),
+    .min(4),
   email: z.string({
-    required_error: "Please fill your email.",
+    required_error: "",
   }),
   password: z.string({
-    required_error: "Please fill your password.",
-  }),
+    required_error: "",
+  }).min(8),
 });
 
 type FormValues = z.infer<typeof FormSchema>;

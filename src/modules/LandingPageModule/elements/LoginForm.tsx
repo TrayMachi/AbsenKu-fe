@@ -22,10 +22,10 @@ import { toast } from "sonner";
 // Define the form schema using zod
 const FormSchema = z.object({
   email: z.string({
-    required_error: "Please fill your email.",
+    required_error: "",
   }),
   password: z.string({
-    required_error: "Please fill your password.",
+    required_error: "",
   }),
 });
 
