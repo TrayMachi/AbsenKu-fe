@@ -1,5 +1,4 @@
 "use client";
-import { useState, useEffect } from "react";
 import type { NextPage } from "next";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -16,14 +15,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
-import { useData } from "./context";
+import { useData } from "../context/context";
 import FetchService from "@/service/fetch.service";
 
 const FormSchema = z.object({
