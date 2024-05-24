@@ -1,4 +1,4 @@
-import { auth } from "../../firebase";
+import { auth } from "../utils/firebase";
 
 class FetchService {
   private baseUrl: string = process.env.BACKEND_URL as string;
@@ -11,9 +11,13 @@ class FetchService {
     return FetchService.instance;
   }
 
-  async getDocuments(userId: string, role: string | null, present: string | null): Promise<any> {
-    const roleUrl = role !== null ? `&role=${role}` : ""
-    const presentUrl = present !== null ? `&present=${present}` : ""
+  async getDocuments(
+    userId: string,
+    role: string | null,
+    present: string | null
+  ): Promise<any> {
+    const roleUrl = role !== null ? `&role=${role}` : "";
+    const presentUrl = present !== null ? `&present=${present}` : "";
     const url = `${this.baseUrl}?userId=${userId}${roleUrl}${presentUrl}`;
     try {
       const response = await fetch(url);
@@ -32,7 +36,10 @@ class FetchService {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error(`Error fetching resource ${userId} with role ${role}:`, error);
+      console.error(
+        `Error fetching resource ${userId} with role ${role}:`,
+        error
+      );
       throw error;
     }
   }
@@ -44,7 +51,7 @@ class FetchService {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({...payload, userId: auth.currentUser?.email}),
+        body: JSON.stringify({ ...payload, userId: auth.currentUser?.email }),
       });
       const data = await response.json();
       return data;
